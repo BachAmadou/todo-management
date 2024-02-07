@@ -2,6 +2,7 @@ package dev.javaNet.todomanagement.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -26,7 +27,14 @@ public class SpringSecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        // NOTE: unfinished security configuration, and there is an error with the admin (we cannot access the data even when using the correct username and password).
+        // will check the whole security configuration from the beginning.
+
         http.authorizeHttpRequests((authorize) -> {
+            // all the users who have a role of "admin" can be able to access add todo, update todo and delete todo REST APIs.
+            authorize.requestMatchers(HttpMethod.POST, "/api/**").hasRole("ADMIN");
+            authorize.requestMatchers(HttpMethod.PUT, "/api/**").hasRole("ADMIN");
+            authorize.requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN");
             authorize.anyRequest().authenticated();
         }).httpBasic(Customizer.withDefaults());
         return http.build();
